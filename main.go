@@ -460,6 +460,7 @@ func mnemonicToSeed(mnemonic string) (seed []byte, err error) {
 func createAddressChangesCmd() *cobra.Command {
 	var accountMin uint64
 	var accountMax uint64
+	var indexOffset uint64
 
 	var forkVersion string
 
@@ -502,7 +503,7 @@ func createAddressChangesCmd() *cobra.Command {
 				withdrCreds[0] = common.BLS_WITHDRAWAL_PREFIX
 
 				msg := common.BLSToExecutionChange{
-					ValidatorIndex:     common.ValidatorIndex(i),
+					ValidatorIndex:     common.ValidatorIndex(indexOffset + i),
 					FromBLSPubKey:      withdrPub,
 					ToExecutionAddress: execAddr,
 				}
@@ -533,6 +534,7 @@ func createAddressChangesCmd() *cobra.Command {
 	cmd.Flags().StringVar(&withdrawalsMnemonic, "withdrawals-mnemonic", "", "Mnemonic to use for BLS withdrawal creds. Withdrawal accounts are assumed to have standard paths relative to validators.")
 	cmd.Flags().Uint64Var(&accountMin, "source-min", 0, "Minimum validator index in HD path range (incl.)")
 	cmd.Flags().Uint64Var(&accountMax, "source-max", 0, "Maximum validator index in HD path range (excl.)")
+	cmd.Flags().Uint64Var(&indexOffset, "index-offset", 0, "Index offset to beacon chain for validator indexes in HD path range")
 	cmd.Flags().StringVar(&genesisValidatorsRootStr, "genesis-validators-root", "", "Genesis validators root. Hex encoded with prefix.")
 	cmd.Flags().StringVar(&executionAddr, "execution-address", "", "Execution address to withdraw to. Hex encoded with prefix.")
 	cmd.Flags().StringVar(&forkVersion, "fork-version", "", "Genesis fork version, e.g. 0x11223344")
